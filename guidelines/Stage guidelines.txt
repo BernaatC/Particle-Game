@@ -1,0 +1,173 @@
+Guidelines for stage files:
+
+
+1 - General layout:
+
+<?xml version="1.0" encoding="UTF_8"?>
+<stage>
+	<points> ... </points>
+	<movingParticles> ... </movingParticles>
+	<goals> ... </goals>
+	<obstacles> ... </obstacles>
+	<magneticFields> ... </magneticFields>
+	<animations> ... </animations>
+</stage>
+
+points: Defines a series of points that can be used for defining coordinates later on. It may be useful in situations where one must use the samme coordinate in multiple instances.
+
+movingParticles: Defines a series of moving particles.
+
+goals: Defines a series of goals where the static particles must arrive to.
+
+obstacles: Defines all obstacles that will be placed in the stage.
+
+magneticFields: Defines all magnetic fields that will be present in the stage.
+
+animations: Defines all movements that will be done by static particles defined in the stage file, as well as goals and shapes.
+
+
+2 - Points:
+
+<points>
+	<point pos="10,25" id="0" />
+	<point pos="15,30" id="1" />
+	...
+</points>
+
+point: Tag that holds all necessary data for defining a point
+Attributes:
+	- pos: Defines the position of the point. Must be represented as two real numbers separated by a comma (without spaces)
+	- id: Defines an ID number attached to the point in question, which can be later used to represent the point. Must be an integer (including zero) and unique between all points.
+
+
+3: Moving particles:
+
+<movingParticles>
+	<particle pos="100,500" charge="1" />
+	<particle pos="300,500" charge="-1" />
+	...
+</movingParticles>
+
+particle: Tag that holds all necessary data for defining a moving particle.
+Attributes:
+	- pos: Defines the position of that static particle. Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+	- charge: Defines the charge of the static particle. Must be one of the following values: [-1, 1]
+
+
+4: Goals:
+
+<goals>
+	<goal pos="175,225" radius="20.0" enabled="yes" id="2" />
+	<goal pos="7" radius="50" enabled="no" id="3" />
+	...
+</goals>
+
+
+goal: Tag that holds all necessary data for defining a goal.
+Attributes:
+	- pos: Defines the position of that goal. Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+	- radius: Defines the radius of the goal. Must be represented as a positive real number.
+	- enabled: Defines whether the goal is enabled at the beginning of the stage. Value must be either "yes" or "no".
+	- id: Defines an ID number attached to the goal, which can be later used for animations. Must be an integer (including zero) and unique between all goals.
+
+
+5: Shapes:
+
+<obstacles>
+	<circle center="300,400" radius="30.0" id="4" />
+	<bagel center="10" innerRadius="20" outerRadius="40" id="5" />
+	<rectangle upperLeftCorner="11" size="12" angle="30" id="6" />
+	<triangle point1="30,50" point2="31" point3="23" id="7" />
+	<regularPolygon nSides="5" center="100,100" radius="50" angle="0" id="8" />
+	...
+</obstacles>
+
+circle: Tag that holds all necessary data for defining a circle.
+Attributes:
+	- center: Defines the position of the center of the circle. Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+	- radius: Defines the radius of the circle. Must be represented as a positive real number.
+
+bagel: Tag that holds all necessary data for defining a bagel.
+Attributes:
+	- center: Defines the position of the center of the bagel. Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+	- innerRadius: Defines the inner radius of the bagel. Must be represented as a positive real number.
+	- outerRadius: Defines the outer radius of the bagel. Must be represented as a positive real number, and must be bigger than the inner radius.
+	
+rectangle: Tag that holds all necessary data for defining a rectangle.
+Attributes:
+	- upperLeftCorner: Defines the position of the upper left corner of the rectangle, assuming the angle is zero. Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+	- size: Defines the size of the rectangle from the upper left corner.Must be represented as two real positive numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID (both of its components should be greater than zero).
+	- angle: Defines the angle at which the rectangle will be initially set. Must be a real number.
+
+triangle: Tag that holds all necessary data for defining a triangle.
+Attributes:
+	- point1, point2, point3: Defines the positions of the points of the triangle. Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID, and they must be put in counterclockwise order.
+
+regularPolygon: Tag that holds all necessary data for defining a regular polygon.
+Attributes:
+	- nSides: defines the number of sizes of the polygon. Must be an integer larger than or equal to 3.
+	- center: Defines the position of the center of the polygon. Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+	- radius: Defines the radius of the smallest circle that inscribes the polygon. Must be represented as a positive real number.
+	- angle: Defines the angle at which the polygon will be initially set. Must be a real number.
+
+Common attributes:
+	- enabled: Defines whether the shape is enabled at the beginning of the stage. Value must be either "yes" or "no".
+	- id: Defines an ID number attached to the polygon, which can be later used for animations. Must be an integer (including zero) and unique between all shapes.
+
+
+6: MagneticFields:
+
+<magneticFields>
+	<circle center="300,400" radius="30.0" direction="in" id="9" />
+	<rectangle upperLeftCorner="11" size="12" angle="30" direction="out" id="10" />
+	...
+</magneticFields>
+
+!! All tags inside can be the same as shapes, but with the following tags added !!
+
+Common attributes:
+	- direction: Defines the direction in which the magnetic field is pointing. Can be either "in" or "out".
+
+
+7: Animations:
+
+<animations>
+	<translate id="1" type="lineal" endPoint="100,100" speedParams="1" startTime="0" endTime="100" loopEvery="0" />
+	<translate id="3" type="bezier" bezierParams="100,100;5;300,200;4" speedParams="1,2,3" startTime="50" endTime="100" loopEvery="150" />
+	<translate id="2" type="circle" radius="50" startAngle="90" endAngle="180" speedParams="0,-1" startTime="50" endTime="100" loopEvery="150" />
+	<rotate id="4" angle="180" speedParams="0,3,-2" startTime="0" endTime="100" loopEvery="0" />
+	<toggle id="5" time="150" loopEvery="200" />
+	<scale id="6" scaleFactor="2" speedParams="1" startTime="0" endTime="100" loopEvery="0" />
+</animations>
+
+translate: Tag that holds all necessary data for defining a translation animation.
+Unique attributes:
+	- type: Defines the type of movement the item will take (linear, circular or quadratic bezier curve) as "lineal", "circle" or "bezier" respectively.
+	if type="lineal":
+		- endPoint: Defines the end point of the translation (assumes the translation starts at (0, 0)). Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+	if type="bezier":
+		- bezierParams: Defines the control points of the Bezier curve, where the starting point is (0,0) and the end point is the last one defined. Must be represented as a series of pooints separated by a semicomma (;) without spaces, and each point must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+	if type="circle":
+		- radius: Distance away from the rotation center. Must be a real number.
+		- startAngle: Starting angle for the animation. Must be a real number, and is represented in degrees.
+		- endAngle: Ending angle for the animation. Must be a real number, and is represented in degrees.
+
+rotate: Tag that holds all necessary data for defining a rotation animation.
+Attributes:
+	- angle: Defines the angle which the item will move (positive -> counterclockwise, in degrees). Must be represented as a floating point number.
+	
+toggle: Tag that holds all necessary data for defining a toggle animation.
+Attributes:
+	- time: Tag that holds the time at which the animation will start (in game updates, 1 update = 1/960 sec). Must be represented as a positive integer (including zero).
+
+scale: Tag that holds all necessaruy data for defining a scale animation.
+Attributes:
+	- scaleFactor: Defines the scale factor of the animation. Must be a positive, non-zero real value.
+	(Note) If scaleFactor is less than 1, the function that defines the growth will be the inverse of the one specified
+
+Common attributes:
+	- id: defines the ID of the object to which the animation will apply to. Must be a positive integer (including zero).
+	- speedParams: Defines the parameters of the polynomial equation (from first to highest possible degree). Must be represented as a series of real numbers separated by commas (without spaces), and scale doesn't matter, as the values will be normalised so as speed variation between 0 and 1 will end at the desired point. Does not appear in toggle.
+	- startTime: Defines the time at which the animation will start (in game updates, 1 update = 1/960 sec). Must be represented as a positive integer (including zero). Does not appear in toggle.
+	- endTime: Defines the time at which the animation will end (in game updates, 1 update = 1/960 sec). Must be represented as a positive integer (including zero), and must not be smaller than startTime. Does not appear in toggle.
+	- loopEvery: Defines the number of game updates it will take for the animation to restart, or if it will at all. Must be represented as a positive integer (including zero), and must be equal to or larger than endTime.

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage>
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="100,300" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="700,300" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles>
+		<rectangle upperLeftCorner="390,0" size="20,300" angle="0" enabled="yes" id="2001" />
+		<rectangle upperLeftCorner="390,300" size="20,300" angle="0" enabled="yes" id="2002" />
+	</obstacles>
+	
+	<animations>
+		<translate id="2001" type="lineal" endPoint="0,-60" speedParams="0,3,-2" startTime="0" endTime="1440" loopEvery="2880" />
+		<translate id="2001" type="lineal" endPoint="0,60" speedParams="0,3,-2" startTime="1440" endTime="2880" loopEvery="2880" />
+		<translate id="2002" type="lineal" endPoint="0,60" speedParams="0,3,-2" startTime="0" endTime="1440" loopEvery="2880" />
+		<translate id="2002" type="lineal" endPoint="0,-60" speedParams="0,3,-2" startTime="1440" endTime="2880" loopEvery="2880" />
+	</animations>
+</stage>

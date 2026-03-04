@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage>
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="100,300" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="600,300" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles>
+		<rectangle upperLeftCorner="590,200" size="20,20" angle="0" enabled="yes" id="2001" />
+		<rectangle upperLeftCorner="512.0577136594,335" size="20,20" angle="30" enabled="yes" id="2002" />
+		<rectangle upperLeftCorner="667.9422863406,335" size="20,20" angle="-30" enabled="yes" id="2003" />
+		
+		<rectangle upperLeftCorner="590,150" size="20,20" angle="0" enabled="yes" id="2101" />
+		<rectangle upperLeftCorner="468.7564434702,220" size="20,20" angle="60" enabled="yes" id="2102" />
+		<rectangle upperLeftCorner="468.7564434702,360" size="20,20" angle="30" enabled="yes" id="2103" />
+		<rectangle upperLeftCorner="590,430" size="20,20" angle="0" enabled="yes" id="2104" />
+		<rectangle upperLeftCorner="711.2435565298,360" size="20,20" angle="-30" enabled="yes" id="2105" />
+		<rectangle upperLeftCorner="711.2435565298,220" size="20,20" angle="-60" enabled="yes" id="2106" />
+	</obstacles>
+	
+	<animations>
+		<translate id="2001" type="circle" radius="90" startAngle="90" endAngle="-270" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		<rotate id="2001" angle="-360" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		
+		<translate id="2002" type="circle" radius="90" startAngle="210" endAngle="-150" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		<rotate id="2002" angle="-360" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		
+		<translate id="2003" type="circle" radius="90" startAngle="330" endAngle="-30" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		<rotate id="2003" angle="-360" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		
+		
+		<translate id="2101" type="circle" radius="140" startAngle="-270" endAngle="90" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<rotate id="2101" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		
+		<translate id="2102" type="circle" radius="140" startAngle="-210" endAngle="150" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<rotate id="2102" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		
+		<translate id="2103" type="circle" radius="140" startAngle="-150" endAngle="210" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<rotate id="2103" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		
+		<translate id="2104" type="circle" radius="140" startAngle="-90" endAngle="270" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<rotate id="2104" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		
+		<translate id="2105" type="circle" radius="140" startAngle="-30" endAngle="330" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<rotate id="2105" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		
+		<translate id="2106" type="circle" radius="140" startAngle="-330" endAngle="30" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<rotate id="2106" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+	</animations>
+</stage>

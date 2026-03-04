@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+	<title val="Animations" />
+	
+	<text>
+		<line val="It's also important to take" />
+		<line val="into account that anything" />
+		<line val="and everything can move at" />
+		<line val="any time and however it" />
+		<line val="pleases. However, fret not," />
+		<line val="as they will always do the" />
+		<line val="same exact movements no" />
+		<line val="matter what." />
+	</text>
+	
+	<staticParticles></staticParticles>
+	
+	<loopTime val="3840" />
+	
+	
+	<points></points>
+	
+	<movingParticles></movingParticles>
+	
+	<goals></goals>
+	
+	<obstacles>
+		<rectangle upperLeftCorner="70,270" size="60,60" angle="0" id="1" />
+		<rectangle upperLeftCorner="270,270" size="60,60" angle="0" id="2" />
+		<rectangle upperLeftCorner="470,270" size="60,60" angle="0" id="3" />
+		<rectangle upperLeftCorner="670,270" size="60,60" angle="0" id="4" />
+	</obstacles>
+	
+	<animations>
+		<translate id="1" type="lineal" endPoint="0,-60" speedParams="1" startTime="0" endTime="720" loopEvery="3840" />
+		<translate id="1" type="lineal" endPoint="0,120" speedParams="1" startTime="1200" endTime="2640" loopEvery="3840" />
+		<translate id="1" type="lineal" endPoint="0,-60" speedParams="1" startTime="3120" endTime="3840" loopEvery="3840" />
+		
+		<rotate id="2" angle="-360" speedParams="1" startTime="0" endTime="1680" loopEvery="3840" />
+		<rotate id="2" angle="360" speedParams="1" startTime="1920" endTime="3600" loopEvery="3840" />
+		
+		<toggle id="3" time="240" loopEvery="960" />
+		
+		<scale id="4" scaleFactor="2" speedParams="1" startTime="0" endTime="720" loopEvery="3840" />
+		<scale id="4" scaleFactor="0.25" speedParams="1" startTime="1200" endTime="2640" loopEvery="3840" />
+		<scale id="4" scaleFactor="2" speedParams="1" startTime="3120" endTime="3840" loopEvery="3840" />
+	</animations>
+</stage>

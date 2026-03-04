@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+	<title val="Blue particles" />
+	
+	<text>
+		<line val="The other item you can" />
+		<line val="Place. Has the opposite" />
+		<line val="as the red ones (attracts" />
+		<line val="+s, repels -s). Its effect" />
+		<line val="also grows stronger the" />
+		<line val="closer the particle is to it." />
+	</text>
+	
+	<staticParticles>
+		<particle pos="600,450" charge="-1" />
+	</staticParticles>
+	
+	<loopTime val="6720" />
+
+
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="200,150" charge="1" />
+	</movingParticles>
+	
+	<goals></goals>
+	
+	<obstacles></obstacles>
+	
+	<animations></animations>
+</stage>

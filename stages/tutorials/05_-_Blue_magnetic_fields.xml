@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+	<title val="Magnetic fields 1" />
+	
+	<text>
+		<line val="When a particle enters this" />
+		<line val="blue-coloured space, it will" />
+		<line val="start moving in circles" />
+		<line val="(Counterclockwise for +s," />
+		<line val="clockwise for -s). They will" />
+		<line val="still be affected by" />
+		<line val="everything else, so keep" />
+		<line val="that in mind." />
+	</text>
+	
+	<staticParticles>
+		<particle pos="100,450" charge="1" />
+	</staticParticles>
+	
+	<loopTime val="4800" />
+	
+	
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="200,450" charge="1" />
+	</movingParticles>
+	
+	<goals></goals>
+	
+	<obstacles></obstacles>
+	
+	<magneticFields>
+		<rectangle upperLeftCorner="400,0" size="400,600" angle="0" enabled="yes" direction="out" id="1" />
+	</magneticFields>
+	
+	<animations></animations>
+</stage>

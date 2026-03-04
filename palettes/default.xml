@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<palette>
+	<background                  val="0xFFFFFFFF" />
+	<staticParticleFillOver2     val="0x7F0000FF" />
+	<staticParticleFillPos2      val="0xBF0000FF" />
+	<staticParticleFillPos1      val="0xFF0000FF" />
+	<staticParticleFill0         val="0xBFBFBFFF" />
+	<staticParticleFillNeg1      val="0x0000FFFF" />
+	<staticParticleFillNeg2      val="0x0000BFFF" />
+	<staticParticleFillUnderNeg2 val="0x00007FFF" />
+	<movingParticleFill          val="0x000000FF" />
+	<movingParticleSymbol        val="0xFFFFFFFF" />
+	<goalFill                    val="0xFFFF7FFF" />
+	<obstacleFill                val="0x66BFFFFF" />
+	<magneticFieldInFill         val="0x00AF003F" />
+	<magneticFieldOutFill        val="0x5F5FFF7F" />
+	<buttonRegular               val="0xDFDFDFFF" />
+	<buttonHover                 val="0xBFBFBFFF" />
+	<buttonText                  val="0x000000FF" />
+	<buttonTextDisabled          val="0x6F6F6FFF" />
+	<gameTitleText               val="0x000000FF" />
+	<normalText                  val="0x000000FF" />
+	<successText                 val="0x1FD000FF" />
+	<warningText                 val="0xEFEF00FF" />
+	<failureText                 val="0xDF0000FF" />
+	<menuBackground              val="0x3F3F3F7F" />
+	<grid                        val="0x7F7F7FFF" />
+</palette>

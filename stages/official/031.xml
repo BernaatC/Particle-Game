@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage>
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="100,350" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="700,350" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles>
+		<rectangle upperLeftCorner="0,0" size="800,30" angle="0" enabled="yes" id="2001" />
+		<rectangle upperLeftCorner="0,70" size="800,30" angle="0" enabled="yes" id="2002" />
+		<rectangle upperLeftCorner="0,0" size="22.5,100" angle="0" enabled="yes" id="2003" />
+		<rectangle upperLeftCorner="778,0" size="22.5,100" angle="0" enabled="yes" id="2004" />
+		
+		<rectangle upperLeftCorner="27.5,35" size="20,30" angle="0" enabled="no" id="2010" />
+		<rectangle upperLeftCorner="52.5,35" size="20,30" angle="0" enabled="no" id="2011" />
+		<rectangle upperLeftCorner="77.5,35" size="20,30" angle="0" enabled="no" id="2012" />
+		<rectangle upperLeftCorner="102.5,35" size="20,30" angle="0" enabled="no" id="2013" />
+		<rectangle upperLeftCorner="127.5,35" size="20,30" angle="0" enabled="no" id="2014" />
+		<rectangle upperLeftCorner="152.5,35" size="20,30" angle="0" enabled="no" id="2015" />
+		<rectangle upperLeftCorner="177.5,35" size="20,30" angle="0" enabled="no" id="2016" />
+		<rectangle upperLeftCorner="202.5,35" size="20,30" angle="0" enabled="no" id="2017" />
+		<rectangle upperLeftCorner="227.5,35" size="20,30" angle="0" enabled="no" id="2018" />
+		<rectangle upperLeftCorner="252.5,35" size="20,30" angle="0" enabled="no" id="2019" />
+		<rectangle upperLeftCorner="277.5,35" size="20,30" angle="0" enabled="no" id="2020" />
+		<rectangle upperLeftCorner="302.5,35" size="20,30" angle="0" enabled="no" id="2021" />
+		<rectangle upperLeftCorner="327.5,35" size="20,30" angle="0" enabled="no" id="2022" />
+		<rectangle upperLeftCorner="352.5,35" size="20,30" angle="0" enabled="no" id="2023" />
+		<rectangle upperLeftCorner="377.5,35" size="20,30" angle="0" enabled="no" id="2024" />
+		<rectangle upperLeftCorner="402.5,35" size="20,30" angle="0" enabled="no" id="2025" />
+		<rectangle upperLeftCorner="427.5,35" size="20,30" angle="0" enabled="no" id="2026" />
+		<rectangle upperLeftCorner="452.5,35" size="20,30" angle="0" enabled="no" id="2027" />
+		<rectangle upperLeftCorner="477.5,35" size="20,30" angle="0" enabled="no" id="2028" />
+		<rectangle upperLeftCorner="502.5,35" size="20,30" angle="0" enabled="no" id="2029" />
+		<rectangle upperLeftCorner="527.5,35" size="20,30" angle="0" enabled="no" id="2030" />
+		<rectangle upperLeftCorner="552.5,35" size="20,30" angle="0" enabled="no" id="2031" />
+		<rectangle upperLeftCorner="577.5,35" size="20,30" angle="0" enabled="no" id="2032" />
+		<rectangle upperLeftCorner="602.5,35" size="20,30" angle="0" enabled="no" id="2033" />
+		<rectangle upperLeftCorner="627.5,35" size="20,30" angle="0" enabled="no" id="2034" />
+		<rectangle upperLeftCorner="652.5,35" size="20,30" angle="0" enabled="no" id="2035" />
+		<rectangle upperLeftCorner="677.5,35" size="20,30" angle="0" enabled="no" id="2036" />
+		<rectangle upperLeftCorner="702.5,35" size="20,30" angle="0" enabled="no" id="2037" />
+		<rectangle upperLeftCorner="727.5,35" size="20,30" angle="0" enabled="no" id="2038" />
+		<rectangle upperLeftCorner="752.5,35" size="20,30" angle="0" enabled="no" id="2039" />
+		
+		<rectangle upperLeftCorner="840,340" size="800,20" angle="0" enabled="no" id="2050" />
+	</obstacles>
+	
+	<animations>
+		<toggle id="2010" time="96" loopEvery="0" />
+		<toggle id="2011" time="192" loopEvery="0" />
+		<toggle id="2012" time="288" loopEvery="0" />
+		<toggle id="2013" time="384" loopEvery="0" />
+		<toggle id="2014" time="480" loopEvery="0" />
+		<toggle id="2015" time="576" loopEvery="0" />
+		<toggle id="2016" time="672" loopEvery="0" />
+		<toggle id="2017" time="768" loopEvery="0" />
+		<toggle id="2018" time="864" loopEvery="0" />
+		<toggle id="2019" time="960" loopEvery="0" />
+		<toggle id="2020" time="1056" loopEvery="0" />
+		<toggle id="2021" time="1152" loopEvery="0" />
+		<toggle id="2022" time="1248" loopEvery="0" />
+		<toggle id="2023" time="1344" loopEvery="0" />
+		<toggle id="2024" time="1440" loopEvery="0" />
+		<toggle id="2025" time="1536" loopEvery="0" />
+		<toggle id="2026" time="1632" loopEvery="0" />
+		<toggle id="2027" time="1728" loopEvery="0" />
+		<toggle id="2028" time="1824" loopEvery="0" />
+		<toggle id="2029" time="1920" loopEvery="0" />
+		<toggle id="2030" time="2016" loopEvery="0" />
+		<toggle id="2031" time="2112" loopEvery="0" />
+		<toggle id="2032" time="2208" loopEvery="0" />
+		<toggle id="2033" time="2304" loopEvery="0" />
+		<toggle id="2034" time="2400" loopEvery="0" />
+		<toggle id="2035" time="2496" loopEvery="0" />
+		<toggle id="2036" time="2592" loopEvery="0" />
+		<toggle id="2037" time="2688" loopEvery="0" />
+		<toggle id="2038" time="2784" loopEvery="0" />
+		<toggle id="2039" time="2880" loopEvery="0" />
+		
+		<toggle id="2050" time="2976" loopEvery="0" />
+		<translate id="2050" type="lineal" endPoint="-150,0" speedParams="1" startTime="2976" endTime="3216" loopEvery="0" />
+		<translate id="2050" type="lineal" endPoint="150,0" speedParams="1" startTime="3216" endTime="3456" loopEvery="0" />
+		<translate id="1001" type="lineal" endPoint="150,0" speedParams="1" startTime="3216" endTime="3456" loopEvery="0" />
+		<toggle id="2050" time="3456" loopEvery="0" />
+		<toggle id="1001" time="3456" loopEvery="0" />
+	</animations>
+</stage>

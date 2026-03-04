@@ -1,0 +1,16 @@
+Guidelines for save files:
+
+
+1 - General layout:
+
+<?xml version="1.0" encoding="UTF_8"?>
+<save>
+	<particle pos="100,500" charge="1" />
+	<particle pos="300,500" charge="-1" />
+	...
+</save>
+
+particle: Tag that holds all necessary data for defining a static particle.
+Attributes:
+	- pos: Defines the position of that static particle. Must be represented as two real numbers separated by a comma (without spaces).
+	- charge: Defines the charge of the static particle. Must be one of the following values: [-1, 1].

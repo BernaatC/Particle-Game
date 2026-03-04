@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+	<title val="The basics" />
+	
+	<text>
+		<line val="The objective of the game?" />
+		<line val="Quite simple really; get your" />
+		<line val="particles (the black circles" />
+		<line val="with a + or - on the middle)" />
+		<line val="to the goal (the big yellow" />
+		<line val="circle). Do that and you win," />
+		<line val="maybe in as little time as" />
+		<line val="possible or making the least" />
+		<line val="moves possible. Simple," />
+		<line val="right? [laughs] Yeah, no." />
+	</text>
+	
+	<staticParticles>
+		<particle pos="100,300" charge="1" />
+	</staticParticles>
+	
+	<loopTime val="3840" />
+
+
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="200,300" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="600,300" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles></obstacles>
+	
+	<animations></animations>
+</stage>

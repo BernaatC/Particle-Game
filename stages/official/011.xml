@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage id="c6a20dd2">
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="100,300" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="700,300" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles>
+		<triangle point1="215,72" point2="200,87" point3="245,132" enabled="yes" id="2001" />
+		<triangle point1="215,72" point2="245,132" point3="260,117" enabled="yes" id="2002" />
+		<triangle point1="245,72" point2="215,132" point3="260,87" enabled="yes" id="2003" />
+		<triangle point1="245,72" point2="200,117" point3="215,132" enabled="yes" id="2004" />
+		<triangle point1="215,204" point2="200,219" point3="245,264" enabled="yes" id="2011" />
+		<triangle point1="215,204" point2="245,264" point3="260,249" enabled="yes" id="2012" />
+		<triangle point1="245,204" point2="215,264" point3="260,219" enabled="yes" id="2013" />
+		<triangle point1="245,204" point2="200,249" point3="215,264" enabled="yes" id="2014" />
+		<triangle point1="215,336" point2="200,351" point3="245,396" enabled="yes" id="2021" />
+		<triangle point1="215,336" point2="245,396" point3="260,381" enabled="yes" id="2022" />
+		<triangle point1="245,336" point2="215,396" point3="260,351" enabled="yes" id="2023" />
+		<triangle point1="245,336" point2="200,381" point3="215,396" enabled="yes" id="2024" />
+		<triangle point1="215,468" point2="200,483" point3="245,528" enabled="yes" id="2031" />
+		<triangle point1="215,468" point2="245,528" point3="260,513" enabled="yes" id="2032" />
+		<triangle point1="245,468" point2="215,528" point3="260,483" enabled="yes" id="2033" />
+		<triangle point1="245,468" point2="200,513" point3="215,528" enabled="yes" id="2034" />
+		<triangle point1="385,138" point2="370,153" point3="415,198" enabled="yes" id="2041" />
+		<triangle point1="385,138" point2="415,198" point3="430,183" enabled="yes" id="2042" />
+		<triangle point1="415,138" point2="385,198" point3="430,153" enabled="yes" id="2043" />
+		<triangle point1="415,138" point2="370,183" point3="385,198" enabled="yes" id="2044" />
+		<triangle point1="385,270" point2="370,285" point3="415,330" enabled="yes" id="2051" />
+		<triangle point1="385,270" point2="415,330" point3="430,315" enabled="yes" id="2052" />
+		<triangle point1="415,270" point2="385,330" point3="430,285" enabled="yes" id="2053" />
+		<triangle point1="415,270" point2="370,315" point3="385,330" enabled="yes" id="2054" />
+		<triangle point1="385,402" point2="370,417" point3="415,462" enabled="yes" id="2061" />
+		<triangle point1="385,402" point2="415,462" point3="430,447" enabled="yes" id="2062" />
+		<triangle point1="415,402" point2="385,462" point3="430,417" enabled="yes" id="2063" />
+		<triangle point1="415,402" point2="370,447" point3="385,462" enabled="yes" id="2064" />
+		<triangle point1="555,72" point2="540,87" point3="585,132" enabled="yes" id="2071" />
+		<triangle point1="555,72" point2="585,132" point3="600,117" enabled="yes" id="2072" />
+		<triangle point1="585,72" point2="555,132" point3="600,87" enabled="yes" id="2073" />
+		<triangle point1="585,72" point2="540,117" point3="555,132" enabled="yes" id="2074" />
+		<triangle point1="555,204" point2="540,219" point3="585,264" enabled="yes" id="2081" />
+		<triangle point1="555,204" point2="585,264" point3="600,249" enabled="yes" id="2082" />
+		<triangle point1="585,204" point2="555,264" point3="600,219" enabled="yes" id="2083" />
+		<triangle point1="585,204" point2="540,249" point3="555,264" enabled="yes" id="2084" />
+		<triangle point1="555,336" point2="540,351" point3="585,396" enabled="yes" id="2091" />
+		<triangle point1="555,336" point2="585,396" point3="600,381" enabled="yes" id="2092" />
+		<triangle point1="585,336" point2="555,396" point3="600,351" enabled="yes" id="2093" />
+		<triangle point1="585,336" point2="540,381" point3="555,396" enabled="yes" id="2094" />
+		<triangle point1="555,468" point2="540,483" point3="585,528" enabled="yes" id="2101" />
+		<triangle point1="555,468" point2="585,528" point3="600,513" enabled="yes" id="2102" />
+		<triangle point1="585,468" point2="555,528" point3="600,483" enabled="yes" id="2103" />
+		<triangle point1="585,468" point2="540,513" point3="555,528" enabled="yes" id="2104" />
+	</obstacles>
+	
+	<animations></animations>
+</stage>

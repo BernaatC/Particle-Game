@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage>
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="320,460" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="480,460" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles>
+		<bagel center="400,300" innerRadius="260" outerRadius="280" enabled="yes" id="2001" />
+		<circle center="400,300" radius="100" enabled="yes" id="2002" />
+		<rectangle upperLeftCorner="390,300" size="20,270" angle="0" enabled="yes" id="2003" />
+	</obstacles>
+	
+	<animations></animations>
+</stage>

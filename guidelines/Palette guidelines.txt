@@ -1,0 +1,61 @@
+Guidelines for colour palette files:
+
+
+1 - General layout:
+
+<?xml version="1.0" encoding="UTF_8"?>
+<palette>
+	<background val="0x01234567" />
+	<staticParticleFillOver2 val="0x89ABCDEF" />
+	<staticParticleFillPos2 val="0x01234567" />
+	<staticParticleFillPos1 val="0x89ABCDEF" />
+	<staticParticleFill0 val="0x01234567" />
+	<staticParticleFillNeg1 val="0x89ABCDEF" />
+	<staticParticleFillNeg2 val="0x01234567" />
+	<staticParticleFillUnderNeg2 val="0x89ABCDEF" />
+	<movingParticleFill val="0x89ABCDEF" />
+	<movingParticleSymbol val="0x01234567" />
+	<goalFill val="0x89ABCDEF" />
+	<obstacleFill val="0x01234567" />
+	<magneticFieldInFill val="0x89ABCDEF" />
+	<magneticFieldOutFill val="0x01234567" />
+	<buttonRegular val="0x89ABCDEF" />
+	<buttonHover val="0x01234567" />
+	<buttonText val="0x89ABCDEF" />
+	<buttonTextDisabled val="0x01234567" />
+	<gameTitleText val="0x89ABCDEF" />
+	<normalText val="0x01234567" />
+	<successText val="0x89ABCDEF" />
+	<warningText val="0x01234567" />
+	<failureText val="0x89ABCDEF" />
+	<menuBackground val="0x01234567" />
+</palette>
+
+- val: Stores all data for a specific colour (Red green, blue and alpha values respectively, each one two characters long)
+
+background: Used when drawing the background for the game.
+staticParticleFillOver2: Used for static particles (User placed or not) where its charge value is equal to 3.
+staticParticleFillPos2: Used for static particles (User placed or not) where its charge value is equal to 2.
+staticParticleFillPos1: Used for static particles (User placed or not) where its charge value is equal to 1.
+staticParticleFill0: Used for static particles (User placed or not) where its charge value is equal to 0.
+staticParticleFillNeg1: Used for static particles (User placed or not) where its charge value is equal to -1.
+staticParticleFillNeg2: Used for static particles (User placed or not) where its charge value is equal to -2.
+staticParticleFillUnderNeg2: Used for static particles (User placed or not) where its charge value is equal to -3.
+movingParticleFill: Used to draw the moving particles, regardless of charge value.
+movingParticleSymbol: Used to draw the moving particles' symbols, regardless of charge value.
+goalFill: Used to draw the goals.
+obstacleFill: Used to draw all obstacle shapes
+magneticFieldInFill: Used to draw magnetig fields that point inwards.
+magneticFieldOutFill: Used to draw magnetig fields that point outwards.
+buttonRegular: Used to draw buttons, appears when not disabled and not hovered over.
+buttonHover: Used to draw buttons, appears when disabled and/or hovered over.
+buttonText: Used to draw text of the buttons (different from regular text) when not disabled.
+buttonTextDisabled: Used to draw text of the buttons (different from regular text) when disabled.
+gameTitleText: Used exclusively to draw the game title (Not game version).
+normalText: Used to draw regular text.
+successText: Used to draw confirmation and success text.
+warningText: Used to draw warning text.
+failureText: Used to fraw error or failure text.
+menuBackground: Used to draw the backgrounds for menus.
+
+Any of the above can be omitted. However, it will be replaced by the default values for that specific colour.

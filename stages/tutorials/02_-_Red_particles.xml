@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+	<title val="Red particles" />
+	
+	<text>
+		<line val="One of the items you can" />
+		<line val="place. If your particle has" />
+		<line val="a +, it will be repelled by it." />
+		<line val="Otherwise (with a -) it will be" />
+		<line val="attracted to it. The closer" />
+		<line val="it is, the greater its effect" />
+		<line val="will be!" />
+	</text>
+	
+	<staticParticles>
+		<particle pos="100,75" charge="1" />
+	</staticParticles>
+	
+	<loopTime val="2880" />
+
+
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="200,150" charge="1" />
+	</movingParticles>
+	
+	<goals></goals>
+	
+	<obstacles></obstacles>
+	
+	<animations></animations>
+</stage>

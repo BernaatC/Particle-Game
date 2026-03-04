@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage id="c18037d8">
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="100,300" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="700,300" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles>
+		<rectangle upperLeftCorner="265,0" size="20,150" angle="0" enabled="yes" id="2001" />
+		<rectangle upperLeftCorner="265,250" size="20,350" angle="0" enabled="yes" id="2002" />
+		<rectangle upperLeftCorner="515,0" size="20,350" angle="0" enabled="yes" id="2003" />
+		<rectangle upperLeftCorner="515,450" size="20,150" angle="0" enabled="yes" id="2004" />
+	</obstacles>
+	
+	<animations></animations>
+</stage>

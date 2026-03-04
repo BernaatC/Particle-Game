@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage>
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="100,300" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="700,300" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles>
+		<circle center="700,300" radius="30.0" id="2001" />
+	</obstacles>
+	
+	<animations>
+		<scale id="2001" scaleFactor="2" speedParams="0,3,-2" startTime="0" endTime="960" loopEvery="1920" />
+		<scale id="2001" scaleFactor="0.5" speedParams="5,-6,4" startTime="960" endTime="1920" loopEvery="1920" />
+	</animations>
+</stage>

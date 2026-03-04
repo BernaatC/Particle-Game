@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage>
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="150,300" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="650,300" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles></obstacles>
+	
+	<magneticFields>
+		<rectangle upperLeftCorner="350,0" size="100,300" angle="0" enabled="yes" direction="in" id="3001" />
+		<rectangle upperLeftCorner="350,300" size="100,300" angle="0" enabled="yes" direction="out" id="3002" />
+	</magneticFields>
+	
+	<animations></animations>
+</stage>

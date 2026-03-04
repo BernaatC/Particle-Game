@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+	<title val="Magnetic fields 2" />
+	
+	<text>
+		<line val="Same as the blue magnetic" />
+		<line val="fields, but this one is" />
+		<line val="green-coloured and will" />
+		<line val="make the particle go in" />
+		<line val="circles the other way" />
+		<line val="around (Clockwise for +s," />
+		<line val="counterclockwise for -s)." />
+		<line val="As before, they will still be" />
+		<line val="affected by everything" />
+		<line val="else, so keep that in mind" />
+		<line val="too." />
+	</text>
+	
+	<staticParticles>
+		<particle pos="100,150" charge="1" />
+	</staticParticles>
+	
+	<loopTime val="4800" />
+	
+	
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="200,150" charge="1" />
+	</movingParticles>
+	
+	<goals></goals>
+	
+	<obstacles></obstacles>
+	
+	<magneticFields>
+		<rectangle upperLeftCorner="400,0" size="400,600" angle="0" enabled="yes" direction="in" id="1" />
+	</magneticFields>
+	
+	<animations></animations>
+</stage>

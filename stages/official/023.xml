@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF_8"?>
+<stage>
+	<points></points>
+	
+	<movingParticles>
+		<particle pos="100,500" charge="1" />
+	</movingParticles>
+	
+	<goals>
+		<goal pos="700,500" radius="50" enabled="yes" id="1001" />
+	</goals>
+	
+	<obstacles>
+		<triangle point1="0,160" point2="400,560" point3="800,160" enabled="yes" id="2001" />
+		<rectangle upperLeftCorner="0,0" size="800,300" angle="0" enabled="yes" id="2002" />
+	</obstacles>
+	
+	<animations></animations>
+</stage>
