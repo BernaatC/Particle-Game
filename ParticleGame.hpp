@@ -15,7 +15,7 @@
 
 // Title of the game and version, moved here for convenience
 static const std::string GAME_TITLE = "Particle Game";
-static const std::string GAME_VERSION = "Ver. 1.0";
+static const std::string GAME_VERSION = "Ver. 1.0a";
 
 
 // Other fixed text messages given to the player
@@ -134,12 +134,6 @@ class Vec2D {
 			return returnCoord;
 		}
 
-		Float operator*(const Vec2D& c) const {
-			// Cross product
-			Float returnVal = (x * c.y) - (c.x * y);
-			return returnVal;
-		}
-
 		Float elementSum() const {
 			return x + y;
 		}
@@ -219,6 +213,12 @@ class VecUtils {
 			return newPointTranslated + center;
 		}
 
+		static Float crossProduct(const Vec2D& c1, const Vec2D& c2) {
+			// Assumes z component is 0 for both Vec2Ds
+			Float returnVal = (c1.x * c2.y) - (c1.x * c2.y);
+			return returnVal;
+		}
+
 		static Vec2D stringToVec(const std::string& str) {
 			Vec2D returnVec;
 			int commaPosition = str.find(',');
@@ -258,7 +258,7 @@ class VecUtils {
 		}
 
 		static Float triangleArea(const Vec2D& c1, const Vec2D& c2, const Vec2D& c3) {
-			return abs((c2 - c1) * (c3 - c1)) / 2;
+			return abs(crossProduct(c2 - c1, c3 - c1)) / 2;
 		}
 };
 
@@ -552,6 +552,19 @@ class Input {
 };
 
 
+class StageLoadOptions {
+	public:
+		StageLoadOptions(const bool& p_mirrorModeOn, const bool& p_invertMovingParticleCharges) :
+			mirrorModeOn(p_mirrorModeOn), invertMovingParticleCharges(p_invertMovingParticleCharges) {}
+
+		~StageLoadOptions() {}
+
+
+		bool mirrorModeOn;
+		bool invertMovingParticleCharges;
+};
+
+
 class Animation {
 	public:
 		typedef struct Target {
@@ -590,6 +603,23 @@ class Animation {
 			m_doesLoop = !(loop == 0);
 		}
 
+		Animation(const pugi::xml_node& animationNode, const std::unordered_map<id_val, Animation::Target>& indexes,
+				  const StageLoadOptions& loadOptions, const bool& isToggle = false) {
+
+			if (!isToggle) {
+				m_speedParams = stringToSpeedVals(animationNode.attribute("speedParams").as_string());
+			}
+
+			id_val targetID = animationNode.attribute("id").as_uint();
+			m_target = indexes.at(targetID);
+
+			m_start = animationNode.attribute("startTime").as_ullong();
+			m_end = isToggle ? m_start : animationNode.attribute("endTime").as_ullong();
+			m_loop = animationNode.attribute("loopEvery").as_ullong();
+
+			m_doesLoop = !(m_loop == 0);
+		}
+
 		~Animation() {}
 
 		virtual Movement calculateAnim(const unsigned long& updateCounter) const = 0;
@@ -625,6 +655,39 @@ class Animation {
 		unsigned long m_start, m_end, m_loop;
 		bool m_doesLoop;
 		Target m_target;
+
+	private:
+		static std::vector<Float> stringToSpeedVals(const std::string& speedValsStr) {
+			std::vector<Float> speedVals = stringToFloatVector(speedValsStr);
+
+			Float valsSum = 0;
+
+			for (size_t i = 0; i < speedVals.size(); i++) {
+				valsSum += speedVals[i];
+			}
+
+			for (size_t i = 0; i < speedVals.size(); i++) {
+				speedVals[i] /= valsSum;;
+			}
+
+			return speedVals;
+		}
+
+		static std::vector<Float> stringToFloatVector(const std::string& str) {
+			std::vector<Float> vals;
+
+			size_t previousCommaPos = 0;
+			while (str.find(',', previousCommaPos) != std::string::npos) {
+				size_t currentCommaPos = str.find(',', previousCommaPos);
+				vals.push_back(std::stof(str.substr(previousCommaPos, currentCommaPos)));
+
+				previousCommaPos = currentCommaPos + 1;
+			}
+
+			vals.push_back(std::stof(str.substr(previousCommaPos, str.length())));
+
+			return vals;
+		}
 };
 
 class LinealTranslate : public Animation {
@@ -634,6 +697,14 @@ class LinealTranslate : public Animation {
 			Animation(speedParams, start, end, loop, target) {
 
 			m_endPoint = endPoint;
+		}
+
+		LinealTranslate(const pugi::xml_node& translationNode, const std::unordered_map<unsigned int, Vec2D>& points,
+						const std::unordered_map<id_val, Animation::Target>& indexes, const StageLoadOptions& loadOptions) :
+			Animation(translationNode, indexes, loadOptions) {
+
+			m_endPoint = VecUtils::decipherStringToVec(translationNode.attribute("endPoint").as_string(), points);
+			m_endPoint.x *= (loadOptions.mirrorModeOn ? -1 : 1);
 		}
 
 		~LinealTranslate() {}
@@ -679,7 +750,20 @@ class CircleTranslate : public Animation {
 			m_startAngle = startAngle;
 			m_endAngle = endAngle;
 
-			m_distanceFromRotationCenter = distanceFromRotationCenter;
+			m_radius = distanceFromRotationCenter;
+		}
+
+		CircleTranslate(const pugi::xml_node& translationNode, const std::unordered_map<id_val, Animation::Target>& indexes,
+						const StageLoadOptions& loadOptions) :
+			Animation(translationNode, indexes, loadOptions) {
+
+			m_radius = AS_FLOAT(translationNode.attribute("radius"));
+
+			m_startAngle = AS_FLOAT(translationNode.attribute("startAngle")) * (-2 * C_PI / 360);
+			m_startAngle = (loadOptions.mirrorModeOn ? (C_PI - m_startAngle) : m_startAngle);
+
+			m_endAngle = AS_FLOAT(translationNode.attribute("endAngle")) * (-2 * C_PI / 360);
+			m_endAngle = (loadOptions.mirrorModeOn ? (C_PI - m_endAngle) : m_endAngle);
 		}
 
 		~CircleTranslate() {}
@@ -706,8 +790,8 @@ class CircleTranslate : public Animation {
 				Float currentAngleVal = m_startAngle + (currentPositionVal * (m_endAngle - m_startAngle));
 				Float nextAngleVal = m_startAngle + (nextPositionVal * (m_endAngle - m_startAngle));
 
-				Vec2D currentAnglePositionVal(m_distanceFromRotationCenter, currentAngleVal, Vec2D::POLAR);
-				Vec2D nextAnglePositionVal(m_distanceFromRotationCenter, nextAngleVal, Vec2D::POLAR);
+				Vec2D currentAnglePositionVal(m_radius, currentAngleVal, Vec2D::POLAR);
+				Vec2D nextAnglePositionVal(m_radius, nextAngleVal, Vec2D::POLAR);
 
 				appliedMovement.move.translation = nextAnglePositionVal - currentAnglePositionVal;
 			}
@@ -717,8 +801,7 @@ class CircleTranslate : public Animation {
 
 	private:
 		Float m_startAngle, m_endAngle;
-
-		Float m_distanceFromRotationCenter;
+		Float m_radius;
 };
 
 class BezierTranslate : public Animation {
@@ -728,6 +811,22 @@ class BezierTranslate : public Animation {
 						const Target& target) : Animation(speedParams, start, end, loop, target) {
 
 			m_controlPoints = controlPoints;
+		}
+
+		BezierTranslate(const pugi::xml_node& translationNode, const std::unordered_map<unsigned int, Vec2D>& points,
+						const std::unordered_map<id_val, Animation::Target>& indexes, const StageLoadOptions& loadOptions) :
+			Animation(translationNode, indexes, loadOptions) {
+
+			static const Vec2D c_zeroVec(0, 0, Vec2D::CARTESIAN);
+
+			m_controlPoints = VecUtils::decipherStringToVecArray(translationNode.attribute("bezierParams").as_string(), points);
+			m_controlPoints.insert(m_controlPoints.begin(), c_zeroVec);
+
+			if (loadOptions.mirrorModeOn) {
+				for (size_t i = 0; i < m_controlPoints.size(); i++) {
+					m_controlPoints[i].x *= -1;
+				}
+			}
 		}
 
 		~BezierTranslate() {}
@@ -789,6 +888,14 @@ class Rotate : public Animation {
 			m_angle = angle;
 		}
 
+		Rotate(const pugi::xml_node& rotationNode, const std::unordered_map<id_val, Animation::Target>& indexes,
+			   const StageLoadOptions& loadOptions) :
+			Animation(rotationNode, indexes, loadOptions) {
+
+			m_angle = -AS_FLOAT(rotationNode.attribute("angle")) * 2 * C_PI / 360;
+			m_angle *= (loadOptions.mirrorModeOn ? -1 : 1);
+		}
+
 		~Rotate() {}
 
 
@@ -826,6 +933,9 @@ class Toggle : public Animation {
 	public:
 		Toggle(const unsigned long& time, const unsigned long& loop, const Target& target) : Animation({}, time, time, loop, target) {}
 
+		Toggle(const pugi::xml_node& toggleNode, const std::unordered_map<id_val, Animation::Target>& indexes,
+			   const StageLoadOptions& loadOptions) : Animation(toggleNode, indexes, loadOptions, true) {}
+
 		~Toggle() {}
 
 
@@ -857,6 +967,13 @@ class Scale : public Animation {
 			Animation(speedParams, start, end, loop, target) {
 			
 			m_scaleFactor = getRealScaleFactor(start, end, scaleFactor / 2);
+		}
+
+		Scale(const pugi::xml_node& scaleNode, const std::unordered_map<id_val, Animation::Target>& indexes,
+			  const StageLoadOptions& loadOptions) :
+			Animation(scaleNode, indexes, loadOptions) {
+
+			m_scaleFactor = getRealScaleFactor(m_start, m_end, AS_FLOAT(scaleNode.attribute("scaleFactor")) / 2);
 		}
 
 		~Scale() {}
@@ -963,21 +1080,25 @@ class Shape {
 			MAGNETIC_FIELD_OUT
 		};
 
-		Shape(const Shape::Function& startingShapeFunction, const Shape::Function& intendedShapeFunction) {
-			m_originalShapeFunction = startingShapeFunction;
-			m_intendedShapeFunction = intendedShapeFunction;
-			m_shapeFunction = startingShapeFunction;
+		typedef struct Functions {
+			Shape::Function original;
+			Shape::Function intended;
+		};
+
+		Shape(const Shape::Functions& shapeFunctions) {
+			m_functions = shapeFunctions;
+			m_currentFunction = m_functions.original;
 		}
 
 		~Shape() {}
 
 
 		void toggle(const bool& shouldToggle) {
-			m_shapeFunction = ((m_shapeFunction == NONE) ^ shouldToggle) ? NONE : m_intendedShapeFunction;
+			m_currentFunction = ((m_currentFunction == NONE) ^ shouldToggle) ? NONE : m_functions.intended;
 		}
 
 		Shape::Function getShapeFunction() const {
-			return m_shapeFunction;
+			return m_currentFunction;
 		}
 
 
@@ -1005,7 +1126,7 @@ class Shape {
 		Colour getColour(const ColourPalette& colourPalette) const {
 			static const Colour d_transparent = 0x00000000;
 
-			switch (m_shapeFunction) {
+			switch (m_currentFunction) {
 				case OBSTACLE:
 					return colourPalette.colours.at("obstacleFill");
 
@@ -1023,21 +1144,21 @@ class Shape {
 		virtual void draw(const DrawOptions& drawOptions, const ColourPalette& colourPalette) const = 0;
 
 	protected:
-		Shape::Function m_originalShapeFunction;
-		Shape::Function m_intendedShapeFunction;
-		Shape::Function m_shapeFunction;
+		Shape::Functions m_functions;
+		Shape::Function m_currentFunction;
 };
 
 class ShapeCircle : public Shape {
 	public:
-		ShapeCircle(const Vec2D& center, const Float& radius, const Shape::Function& startingShapeFunction,
-					const Shape::Function& intendedShapeFunction) : Shape(startingShapeFunction, intendedShapeFunction) {
+		ShapeCircle(const pugi::xml_node& circleNode, const std::unordered_map<unsigned int, Vec2D>& points,
+					const Shape::Functions& shapeFunctions, const StageLoadOptions& loadOptions) : Shape(shapeFunctions) {
 
-			m_originalCenter = center;
-			m_center = center;
+			m_center = VecUtils::decipherStringToVec(circleNode.attribute("center").as_string(), points);
+			m_center.x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_center.x) : m_center.x);
+			m_originalCenter = m_center;
 
-			m_radius = radius;
-			m_originalRadius = radius;
+			m_radius = AS_FLOAT(circleNode.attribute("radius"));
+			m_originalRadius = m_radius;
 		}
 
 		~ShapeCircle() {}
@@ -1064,7 +1185,7 @@ class ShapeCircle : public Shape {
 		void reset() {
 			m_center = m_originalCenter;
 			m_radius = m_originalRadius;
-			m_shapeFunction = m_originalShapeFunction;
+			m_currentFunction = m_functions.original;
 		}
 
 
@@ -1088,15 +1209,17 @@ class ShapeCircle : public Shape {
 
 class ShapeBagel : public Shape {
 	public:
-		ShapeBagel(const Vec2D& center, const Float& innerRadius, const Float& outerRadius, const Shape::Function& startingShapeFunction, 
-				   const Shape::Function& intendedShapeFunction) : Shape(startingShapeFunction, intendedShapeFunction) {
+		ShapeBagel(const pugi::xml_node& bagelNode, const std::unordered_map<unsigned int, Vec2D>& points,
+				   const Shape::Functions& shapeFunctions, const StageLoadOptions& loadOptions) : Shape(shapeFunctions) {
 
-			m_originalCenter = center;
-			m_center = center;
-			m_innerRadius = innerRadius;
-			m_outerRadius = outerRadius;
-			m_originalInnerRadius = innerRadius;
-			m_originalOuterRadius = outerRadius;
+			m_center = VecUtils::decipherStringToVec(bagelNode.attribute("center").as_string(), points);
+			m_center.x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_center.x) : m_center.x);
+			m_originalCenter = m_center;
+
+			m_innerRadius = AS_FLOAT(bagelNode.attribute("innerRadius"));
+			m_originalInnerRadius = m_innerRadius;
+			m_outerRadius = AS_FLOAT(bagelNode.attribute("outerRadius"));
+			m_originalOuterRadius = m_outerRadius;
 		}
 
 		~ShapeBagel() {}
@@ -1125,7 +1248,7 @@ class ShapeBagel : public Shape {
 			m_center = m_originalCenter;
 			m_innerRadius = m_originalInnerRadius;
 			m_outerRadius = m_originalOuterRadius;
-			m_shapeFunction = m_originalShapeFunction;
+			m_currentFunction = m_functions.original;
 		}
 
 
@@ -1152,15 +1275,29 @@ class ShapeBagel : public Shape {
 
 class ShapeTriangle : public Shape {
 	public:
-		ShapeTriangle(const Vec2D& point1, const Vec2D& point2, const Vec2D& point3, const Shape::Function& startingShapeFunction, 
-					  const Shape::Function& intendedShapeFunction) : Shape(startingShapeFunction, intendedShapeFunction) {
-
+		ShapeTriangle(const Vec2D& point1, const Vec2D& point2, const Vec2D& point3) : Shape({ NONE, NONE }) {
 			m_originalPoints[0] = point1;
 			m_originalPoints[1] = point2;
 			m_originalPoints[2] = point3;
 			m_points[0] = point1;
 			m_points[1] = point2;
 			m_points[2] = point3;
+		}
+
+		ShapeTriangle(const pugi::xml_node& triangleNode, const std::unordered_map<unsigned int, Vec2D>& points,
+					  const Shape::Functions& shapeFunctions, const StageLoadOptions& loadOptions) : Shape(shapeFunctions) {
+
+			m_points[0] = VecUtils::decipherStringToVec(triangleNode.attribute("point1").as_string(), points);
+			m_points[0].x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_points[0].x) : m_points[0].x);
+			m_originalPoints[0] = m_points[0];
+
+			m_points[1] = VecUtils::decipherStringToVec(triangleNode.attribute("point2").as_string(), points);
+			m_points[1].x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_points[1].x) : m_points[1].x);
+			m_originalPoints[1] = m_points[1];
+
+			m_points[2] = VecUtils::decipherStringToVec(triangleNode.attribute("point3").as_string(), points);
+			m_points[2].x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_points[2].x) : m_points[2].x);
+			m_originalPoints[2] = m_points[2];
 		}
 
 		~ShapeTriangle() {}
@@ -1196,7 +1333,7 @@ class ShapeTriangle : public Shape {
 			m_points[0] = m_originalPoints[0];
 			m_points[1] = m_originalPoints[1];
 			m_points[2] = m_originalPoints[2];
-			m_shapeFunction = m_originalShapeFunction;
+			m_currentFunction = m_functions.original;
 		}
 
 
@@ -1303,13 +1440,16 @@ class ShapeTriangle : public Shape {
 
 class ShapeRectangle : public Shape {
 	public:
-		ShapeRectangle(const Vec2D& upperLeftCorner, const Vec2D& size, const Float& angle, const Shape::Function& startingShapeFunction, 
-					   const Shape::Function& intendedShapeFunction) : Shape(startingShapeFunction, intendedShapeFunction) {
-			m_originalUpperLeftCorner = upperLeftCorner;
-			m_upperLeftCorner = upperLeftCorner;
-			m_size = size;
-			m_originalSize = size;
-			m_angle = angle;
+		ShapeRectangle(const pugi::xml_node& rectNode, const std::unordered_map<unsigned int, Vec2D>& points,
+					   const Shape::Functions& shapeFunctions, const StageLoadOptions& loadOptions) : Shape(shapeFunctions) {
+
+			m_upperLeftCorner = VecUtils::decipherStringToVec(rectNode.attribute("upperLeftCorner").as_string(), points);
+			m_size = VecUtils::decipherStringToVec(rectNode.attribute("size").as_string(), points);
+			m_upperLeftCorner.x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_upperLeftCorner.x - m_size.x) : m_upperLeftCorner.x);
+			m_originalUpperLeftCorner = m_upperLeftCorner;
+			m_originalSize = m_size;
+
+			m_angle = -AS_FLOAT(rectNode.attribute("angle")) / 360 * 2 * C_PI * (loadOptions.mirrorModeOn ? -1 : 1);
 			m_originalAngle = m_angle;
 		}
 
@@ -1368,7 +1508,7 @@ class ShapeRectangle : public Shape {
 			m_upperLeftCorner = m_originalUpperLeftCorner;
 			m_angle = m_originalAngle;
 			m_size = m_originalSize;
-			m_shapeFunction = m_originalShapeFunction;
+			m_currentFunction = m_functions.original;
 		}
 
 
@@ -1408,20 +1548,20 @@ class ShapeRectangle : public Shape {
 
 class ShapeRegularPolygon : public Shape {
 	public:
-		ShapeRegularPolygon(const size_t& nSides, const Vec2D& center, const Float& radius, const Float& angle, 
-							const Shape::Function& startingShapeFunction, const Shape::Function& intendedShapeFunction) : 
-							Shape(startingShapeFunction, intendedShapeFunction) {
+		ShapeRegularPolygon(const pugi::xml_node& regPolygonNode, const std::unordered_map<unsigned int, Vec2D>& points,
+							const Shape::Functions& shapeFunctions, const StageLoadOptions& loadOptions) : Shape(shapeFunctions) {
 
-			m_nSides = nSides;
-				
-			m_originalCenter = center;
-			m_center = center;
+			m_nSides = regPolygonNode.attribute("nSides").as_uint();
 
-			m_radius = radius;
-			m_originalRadius = radius;
+			m_center = VecUtils::decipherStringToVec(regPolygonNode.attribute("center").as_string(), points);
+			m_center.x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_center.x) : m_center.x);
+			m_originalCenter = m_center;
 
-			m_originalAngle = angle;
-			m_angle = angle;
+			m_radius = AS_FLOAT(regPolygonNode.attribute("radius"));
+			m_originalRadius = m_radius;
+
+			m_angle = AS_FLOAT(regPolygonNode.attribute("angle")) * (loadOptions.mirrorModeOn ? -1 : 1);
+			m_originalAngle = m_angle;
 		}
 
 		~ShapeRegularPolygon() {}
@@ -1440,7 +1580,7 @@ class ShapeRegularPolygon : public Shape {
 				point1 = point1 + m_center;
 				point2 = point2 + m_center;
 
-				ShapeTriangle subpolygon(m_center, point1, point2, NONE, NONE);
+				ShapeTriangle subpolygon(m_center, point1, point2);
 				if (subpolygon.isTouching(particleCenter)) {
 					return true;
 				}
@@ -1466,7 +1606,7 @@ class ShapeRegularPolygon : public Shape {
 			m_center = m_originalCenter;
 			m_angle = m_originalAngle;
 			m_radius = m_originalRadius;
-			m_shapeFunction = m_originalShapeFunction;
+			m_currentFunction = m_functions.original;
 		}
 
 
@@ -1516,6 +1656,25 @@ class Particle {
 			m_charge = charge;
 		}
 
+		Particle(const pugi::xml_node& particleNode) {
+			static const std::unordered_map<unsigned int, Vec2D> c_noPoints;
+			m_position = VecUtils::decipherStringToVec(particleNode.attribute("pos").as_string(), c_noPoints);
+			m_originalPosition = m_position;
+
+			m_charge = AS_FLOAT(particleNode.attribute("charge"));
+		}
+
+		Particle(const pugi::xml_node& particleNode, const std::unordered_map<unsigned int, Vec2D>& points,
+				 const StageLoadOptions& loadOptions) {
+
+			m_position = VecUtils::decipherStringToVec(particleNode.attribute("pos").as_string(), points);
+			m_position.x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_position.x) : m_position.x);
+			m_originalPosition = m_position;
+
+
+			m_charge = AS_FLOAT(particleNode.attribute("charge")) * (loadOptions.invertMovingParticleCharges ? -1 : 1);
+		}
+
 		~Particle() {}
 
 
@@ -1548,6 +1707,8 @@ class StaticParticle : public Particle {
 		StaticParticle(const Vec2D& position, const Float& charge) : Particle(position, charge) {}
 
 		StaticParticle(const Float& x, const Float& y, const Float& charge) : Particle(x, y, charge) {}
+
+		StaticParticle(const pugi::xml_node& movingParticleNode) : Particle(movingParticleNode) {}
 
 		~StaticParticle() {}
 
@@ -1615,6 +1776,12 @@ class MovingParticle : public Particle {
 
 		MovingParticle(const Vec2D& position, const int& charge, const Float& mass = 1) : Particle(position, charge) {
 			m_mass = mass;
+		}
+
+		MovingParticle(const pugi::xml_node& movingParticleNode, const std::unordered_map<unsigned int, Vec2D>& points,
+					   const StageLoadOptions& loadOptions) : Particle(movingParticleNode, points, loadOptions) {
+
+			m_mass = 1;
 		}
 
 		~MovingParticle() {}
@@ -1718,9 +1885,23 @@ class Goal {
 			m_originalPosition = position;
 
 			m_radius = radius;
+			m_originalRadius = radius;
 
 			m_isEnabled = isEnabled;
 			m_initiallyEnabled = isEnabled;
+		}
+
+		Goal(const pugi::xml_node& goalNode, const std::unordered_map<unsigned int, Vec2D>& points, const StageLoadOptions& loadOptions) {
+			m_position = VecUtils::decipherStringToVec(goalNode.attribute("pos").as_string(), points);
+			m_position.x = (loadOptions.mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - m_position.x) : m_position.x);
+			m_originalPosition = m_position;
+
+			m_radius = AS_FLOAT(goalNode.attribute("radius"));
+			m_originalRadius = m_radius;
+
+			std::string enabled = goalNode.attribute("enabled").as_string();
+			m_isEnabled = !(enabled == "no");
+			m_initiallyEnabled = m_isEnabled;
 		}
 
 		~Goal() {}
@@ -1773,6 +1954,7 @@ class Goal {
 		void reset() {
 			m_position = m_originalPosition;
 			m_isEnabled = m_initiallyEnabled;
+			m_radius = m_originalRadius;
 		}
 
 
@@ -1790,7 +1972,7 @@ class Goal {
 
 	private:
 		Vec2D m_position, m_originalPosition;
-		int m_radius;
+		int m_radius, m_originalRadius;
 
 		bool m_isEnabled, m_initiallyEnabled;
 };
@@ -2263,7 +2445,7 @@ class LoadStageXML {
 
 		LoadStageXML() = delete;
 
-		static Stage* loadStage(const std::string& stageName, const bool& mirrorModeOn, const bool& invertMovingParticleCharges) {
+		static Stage* loadStage(const std::string& stageName, const StageLoadOptions& loadOptions) {
 			Stage* stage = new Stage(stageName);
 
 			if (stageName != "") {
@@ -2274,23 +2456,23 @@ class LoadStageXML {
 
 				std::unordered_map<unsigned int, Vec2D> points = getPoints(rootNode.child("points"));
 
-				addMovingParticles(rootNode.child("movingParticles"), points, stage, mirrorModeOn, invertMovingParticleCharges);
+				addMovingParticles(rootNode.child("movingParticles"), points, stage, loadOptions);
 
 				std::unordered_map<id_val, Animation::Target> indexes;
 
-				addGoals(rootNode.child("goals"), points, indexes, stage, mirrorModeOn);
-				addShapes("obstacles", rootNode.child("obstacles"), points, indexes, stage, mirrorModeOn);
-				addShapes("magneticFields", rootNode.child("magneticFields"), points, indexes, stage, mirrorModeOn);
+				addGoals(rootNode.child("goals"), points, indexes, stage, loadOptions);
+				addShapes("obstacles", rootNode.child("obstacles"), points, indexes, stage, loadOptions);
+				addShapes("magneticFields", rootNode.child("magneticFields"), points, indexes, stage, loadOptions);
 
-				addAnimations(rootNode.child("animations"), points, indexes, stage, mirrorModeOn);
+				addAnimations(rootNode.child("animations"), points, indexes, stage, loadOptions);
 			}
 
 			return stage;
 		}
 
-		static LoadStageXML::TutorialReturn loadTutorialSpecificData(const std::string& stagePath) {
+		static LoadStageXML::TutorialReturn loadTutorialSpecificData(const std::string& stageName) {
 			pugi::xml_document file;
-			pugi::xml_parse_result stageXML = file.load_file(stagePath.c_str());
+			pugi::xml_parse_result stageXML = file.load_file(stageName.c_str());
 			pugi::xml_node rootNode = file.child("stage");
 
 			LoadStageXML::TutorialReturn tutorialReturn;
@@ -2325,30 +2507,19 @@ class LoadStageXML {
 		}
 
 		static void addMovingParticles(const pugi::xml_node& movingParticlesNode, const std::unordered_map<unsigned int, Vec2D>& points, 
-									   Stage* stage, const bool& mirrorModeOn, const bool& invertMovingParticleCharges) {
+									   Stage* stage, const StageLoadOptions& loadOptions) {
 
 			for (auto it = movingParticlesNode.begin(); it != movingParticlesNode.end(); it++) {
-
-				Vec2D position = VecUtils::decipherStringToVec(it->attribute("pos").as_string(), points);
-				position.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - position.x) : position.x);
-					
-				Float charge = AS_FLOAT(it->attribute("charge"));
-				charge *= (invertMovingParticleCharges ? -1 : 1);
-
-				MovingParticle p(position, charge);
+				MovingParticle p(*it, points, loadOptions);
 				stage->m_movingParticles.push_back(p);
 			}
 		}
 
 		static std::list<StaticParticle> addStaticParticles(const pugi::xml_node& staticParticlesNode) {
 			std::list<StaticParticle> staticParticles;
-			std::unordered_map<unsigned int, Vec2D> points;
 
 			for (auto it = staticParticlesNode.begin(); it != staticParticlesNode.end(); it++) {
-				Vec2D position = VecUtils::decipherStringToVec(it->attribute("pos").as_string(), points);
-				Float charge = AS_FLOAT(it->attribute("charge"));
-
-				StaticParticle p(position, charge);
+				StaticParticle p(*it);
 				staticParticles.push_back(p);
 			}
 
@@ -2356,101 +2527,23 @@ class LoadStageXML {
 		}
 
 		static void addGoals(const pugi::xml_node& goalsNode, const std::unordered_map<unsigned int, Vec2D>& points,
-							 std::unordered_map<id_val, Animation::Target>& indexes, Stage* stage, const bool& mirrorModeOn) {
+							 std::unordered_map<id_val, Animation::Target>& indexes, Stage* stage, const StageLoadOptions& loadOptions) {
 
 			for (auto it = goalsNode.begin(); it != goalsNode.end(); it++) {
 				id_val id = it->attribute("id").as_uint();
-				Vec2D position = VecUtils::decipherStringToVec(it->attribute("pos").as_string(), points);
-				Float radius = AS_FLOAT(it->attribute("radius"));
-				position.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - position.x) : position.x);
 
 				Animation::Target target = { Animation::Target::GOAL, stage->m_goals.size() };
 				indexes.insert({ id, target });
 
-				std::string enabled = it->attribute("enabled").as_string();
-				bool function = !(enabled == "no");
-
-				Goal g(position, radius, function);
+				Goal g(*it, points, loadOptions);
 				stage->m_goals.push_back(g);
 			}
 		}
 
 
-		static void addCircle(const pugi::xml_node& circleNode, 
-							  const std::unordered_map<unsigned int, Vec2D>& points,
-							  std::vector<Shape*>& shapesVec, const Shape::Function& startingShapeFunction,
-							  const Shape::Function& intendedShapeFunction, const bool& mirrorModeOn) {
-
-			Vec2D center = VecUtils::decipherStringToVec(circleNode.attribute("center").as_string(), points);
-			Float radius = AS_FLOAT(circleNode.attribute("radius"));
-			center.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - center.x) : center.x);
-
-			shapesVec.push_back(new ShapeCircle(center, radius, startingShapeFunction, intendedShapeFunction));
-		}
-
-		static void addBagel(const pugi::xml_node& bagelNode, 
-							 const std::unordered_map<unsigned int, Vec2D>& points,
-							 std::vector<Shape*>& shapesVec, const Shape::Function& startingShapeFunction,
-							 const Shape::Function& intendedShapeFunction, const bool& mirrorModeOn) {
-
-			Vec2D center = VecUtils::decipherStringToVec(bagelNode.attribute("center").as_string(), points);
-			Float innerRadius = AS_FLOAT(bagelNode.attribute("innerRadius"));
-			Float outerRadius = AS_FLOAT(bagelNode.attribute("outerRadius"));
-			center.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - center.x) : center.x);
-
-			shapesVec.push_back(new ShapeBagel(center, innerRadius, outerRadius, startingShapeFunction, intendedShapeFunction));
-		}
-
-		static void addRectangle(const pugi::xml_node& rectNode, 
-								 const std::unordered_map<unsigned int, Vec2D>& points,
-								 std::vector<Shape*>& shapesVec, const Shape::Function& startingShapeFunction,
-								 const Shape::Function& intendedShapeFunction, const bool mirrorModeOn) {
-
-			Vec2D upperLeftCorner = VecUtils::decipherStringToVec(rectNode.attribute("upperLeftCorner").as_string(), points);
-			Vec2D size = VecUtils::decipherStringToVec(rectNode.attribute("size").as_string(), points);
-			Float angle = -AS_FLOAT(rectNode.attribute("angle")) / 360 * 2 * C_PI;
-			upperLeftCorner.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - upperLeftCorner.x - size.x) : upperLeftCorner.x);
-			angle *= (mirrorModeOn ? -1 : 1);
-
-			shapesVec.push_back(new ShapeRectangle(upperLeftCorner, size, angle, startingShapeFunction, intendedShapeFunction));
-		}
-
-		static void addTriangle(const pugi::xml_node& triangleNode, 
-								const std::unordered_map<unsigned int, Vec2D>& points,
-								std::vector<Shape*>& shapesVec, const Shape::Function& startingShapeFunction,
-								const Shape::Function& intendedShapeFunction, const bool& mirrorModeOn) {
-
-			Vec2D point1 = VecUtils::decipherStringToVec(triangleNode.attribute("point1").as_string(), points);
-			Vec2D point2 = VecUtils::decipherStringToVec(triangleNode.attribute("point2").as_string(), points);
-			Vec2D point3 = VecUtils::decipherStringToVec(triangleNode.attribute("point3").as_string(), points);
-			point1.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - point1.x) : point1.x);
-			point2.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - point2.x) : point2.x);
-			point3.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - point3.x) : point3.x);
-
-			shapesVec.push_back(new ShapeTriangle(point1, point2, point3, startingShapeFunction, intendedShapeFunction));
-		}
-
-		static void addRegularPolygon(const pugi::xml_node& regularPolygonNode,
-									  const std::unordered_map<unsigned int, Vec2D>& points,
-									  std::vector<Shape*>& shapesVec, const Shape::Function& startingShapeFunction,
-									  const Shape::Function& intendedShapeFunction, const bool& mirrorModeOn) {
-
-			size_t nSides = regularPolygonNode.attribute("nSides").as_uint();
-
-			Vec2D center = VecUtils::decipherStringToVec(regularPolygonNode.attribute("center").as_string(), points);
-			center.x = (mirrorModeOn ? (VIRTUAL_SCREEN_WIDTH - center.x) : center.x);
-
-			Float radius = AS_FLOAT(regularPolygonNode.attribute("radius"));
-
-			Float angle = AS_FLOAT(regularPolygonNode.attribute("angle"));
-			angle *= (mirrorModeOn ? -1 : 1);
-
-			shapesVec.push_back(new ShapeRegularPolygon(nSides, center, radius, angle, startingShapeFunction, intendedShapeFunction));
-		}
-
 		static void addShapes(const std::string& shapeListType, const pugi::xml_node& shapesNode,
 							  const std::unordered_map<unsigned int, Vec2D>& points,
-							  std::unordered_map<id_val, Animation::Target>& indexes, Stage* stage, const bool& mirrorModeOn) {
+							  std::unordered_map<id_val, Animation::Target>& indexes, Stage* stage, const StageLoadOptions& loadOptions) {
 
 			typedef enum ShapeType {
 				CIRCLE = 0,
@@ -2468,20 +2561,13 @@ class LoadStageXML {
 				{"regularPolygon", REGULAR_POLYGON}
 			};
 
-			std::vector<Shape*>* listPtr = nullptr;
-			if (shapeListType == "obstacles") {
-				listPtr = &stage->m_shapes;
-			}
-			else if (shapeListType == "magneticFields") {
-				listPtr = &stage->m_magneticFields;
-			}
+			bool isMagneticFields = (shapeListType == "magneticFields");
+
+			std::vector<Shape*>* listPtr = (isMagneticFields ? &stage->m_magneticFields : &stage->m_shapes);
 
 			for (auto it = shapesNode.begin(); it != shapesNode.end(); it++) {
-				Animation::Target::Type targetType;
-				if (shapeListType == "obstacles") {
-					targetType = Animation::Target::OBSTACLE;
-				}
-				else if (shapeListType == "magneticFields") {
+				Animation::Target::Type targetType = Animation::Target::OBSTACLE;
+				if (isMagneticFields) {
 					targetType = Animation::Target::MAGNETIC_FIELD;
 				}
 
@@ -2491,242 +2577,90 @@ class LoadStageXML {
 
 				std::string enabled = it->attribute("enabled").as_string();
 
-				Shape::Function notDisabledFunction = Shape::NONE;
+				Shape::Functions shapeFunctions;
 				if (shapeListType == "obstacles") {
-					notDisabledFunction = Shape::OBSTACLE;
+					shapeFunctions.intended = Shape::OBSTACLE;
 				}
-				else if (shapeListType == "magneticFields") {
+				else if (isMagneticFields) {
 					std::string direction = it->attribute("direction").as_string();
 					if (direction == "in") {
-						notDisabledFunction = Shape::MAGNETIC_FIELD_IN;
+						shapeFunctions.intended = Shape::MAGNETIC_FIELD_IN;
 					}
 					else if (direction == "out") {
-						notDisabledFunction = Shape::MAGNETIC_FIELD_OUT;
+						shapeFunctions.intended = Shape::MAGNETIC_FIELD_OUT;
 					}
 				}
 
-				Shape::Function function = (enabled == "no") ? Shape::NONE : notDisabledFunction;
+				shapeFunctions.original = (enabled == "no") ? Shape::NONE : shapeFunctions.intended;
 
+				Shape* shapeNode = nullptr;
 				switch (c_stringToShapeType.at(it->name())) {
 					case CIRCLE:
-						addCircle(*it, points, *listPtr, function, notDisabledFunction, mirrorModeOn);
+						shapeNode = new ShapeCircle(*it, points, shapeFunctions, loadOptions);
 						break;
 
 					case BAGEL:
-						addBagel(*it, points, *listPtr, function, notDisabledFunction, mirrorModeOn);
+						shapeNode = new ShapeBagel(*it, points, shapeFunctions, loadOptions);
 						break;
 
 					case RECTANGLE:
-						addRectangle(*it, points, *listPtr, function, notDisabledFunction, mirrorModeOn);
+						shapeNode = new ShapeRectangle(*it, points, shapeFunctions, loadOptions);
 						break;
 
 					case TRIANGLE:
-						addTriangle(*it, points, *listPtr, function, notDisabledFunction, mirrorModeOn);
+						shapeNode = new ShapeTriangle(*it, points, shapeFunctions, loadOptions);
 						break;
-						
+
 					case REGULAR_POLYGON:
-						addRegularPolygon(*it, points, *listPtr, function, notDisabledFunction, mirrorModeOn);
+						shapeNode = new ShapeRegularPolygon(*it, points, shapeFunctions, loadOptions);
 						break;
 
 					default:
 						break;
 				}
-			}
-		}
-
-
-		static std::vector<Float> stringToFloatVector(const std::string& str) {
-			std::vector<Float> vals;
-
-			size_t previousCommaPos = 0;
-			while (str.find(',', previousCommaPos) != std::string::npos) {
-				size_t currentCommaPos = str.find(',', previousCommaPos);
-				vals.push_back(std::stof(str.substr(previousCommaPos, currentCommaPos)));
-
-				previousCommaPos = currentCommaPos + 1;
-			}
-
-			vals.push_back(std::stof(str.substr(previousCommaPos, str.length())));
-
-			return vals;
-		}
-
-		static std::vector<Float> stringToSpeedVals(const std::string& speedValsStr) {
-			std::vector<Float> speedVals = stringToFloatVector(speedValsStr);
-				
-			Float valsSum = 0;
-
-			for (size_t i = 0; i < speedVals.size(); i++) {
-				valsSum += speedVals[i];
-			}
-
-			for (size_t i = 0; i < speedVals.size(); i++) {
-				speedVals[i] /= valsSum;;
-			}
-
-			return speedVals;
-		}
-
-		static void addLinealTranslation(const pugi::xml_node& translationNode, const std::unordered_map<unsigned int, Vec2D>& points,
-										 const std::unordered_map<id_val, Animation::Target>& indexes, 
-										 Stage* stage, const bool& mirrorModeOn) {
-
-			id_val targetID = translationNode.attribute("id").as_uint();
-			Animation::Target target = indexes.at(targetID);
-
-			unsigned long start = translationNode.attribute("startTime").as_ullong();
-			unsigned long end = translationNode.attribute("endTime").as_ullong();
-			unsigned long loop = translationNode.attribute("loopEvery").as_ullong();
-
-			Vec2D endPoint = VecUtils::decipherStringToVec(translationNode.attribute("endPoint").as_string(), points);
-			endPoint.x *= (mirrorModeOn ? -1 : 1);
-
-			std::vector<Float> speedVals = stringToSpeedVals(translationNode.attribute("speedParams").as_string());
-
-			stage->m_animations.push_back(new LinealTranslate(endPoint, speedVals, start, end, loop, target));
-		}
-
-		static void addBezierTranslation(const pugi::xml_node& translationNode, const std::unordered_map<unsigned int, Vec2D>& points,
-										 const std::unordered_map<id_val, Animation::Target>& indexes, 
-										 Stage* stage, const bool& mirrorModeOn) {
-
-			id_val targetID = translationNode.attribute("id").as_uint();
-			Animation::Target target = indexes.at(targetID);
-			static const Vec2D c_zeroVec(0, 0, Vec2D::CARTESIAN);
-
-			unsigned long start = translationNode.attribute("startTime").as_ullong();
-			unsigned long end = translationNode.attribute("endTime").as_ullong();
-			unsigned long loop = translationNode.attribute("loopEvery").as_ullong();
-
-			std::vector<Vec2D> controlPoints = VecUtils::decipherStringToVecArray(translationNode.attribute("bezierParams").as_string(), points);
-			controlPoints.insert(controlPoints.begin(), c_zeroVec);
-
-			if (mirrorModeOn) {
-				for (size_t i = 0; i < controlPoints.size(); i++) {
-					controlPoints[i].x *= -1;
+				if (shapeNode != nullptr) {
+					(*listPtr).push_back(shapeNode);
 				}
 			}
-
-			std::vector<Float> speedVals = stringToSpeedVals(translationNode.attribute("speedParams").as_string());
-
-			stage->m_animations.push_back(new BezierTranslate(controlPoints, speedVals, start, end, loop, target));
 		}
 
-		static void addCircleTranslation(const pugi::xml_node& translationNode, const std::unordered_map<unsigned int, Vec2D>& points,
-										 const std::unordered_map<id_val, Animation::Target>& indexes, 
-										 Stage* stage, const bool& mirrorModeOn) {
-
-			id_val targetID = translationNode.attribute("id").as_uint();
-			Animation::Target target = indexes.at(targetID);
-
-			unsigned long start = translationNode.attribute("startTime").as_ullong();
-			unsigned long end = translationNode.attribute("endTime").as_ullong();
-			unsigned long loop = translationNode.attribute("loopEvery").as_ullong();
-
-			Float radius = AS_FLOAT(translationNode.attribute("radius"));
-			Float startAngle = AS_FLOAT(translationNode.attribute("startAngle")) * (-2 * C_PI / 360);
-			Float endAngle = AS_FLOAT(translationNode.attribute("endAngle")) * (-2 * C_PI / 360);
-			startAngle = (mirrorModeOn ? (C_PI - startAngle) : startAngle);
-			endAngle = (mirrorModeOn ? (C_PI - endAngle) : endAngle);
-
-			std::vector<Float> speedVals = stringToSpeedVals(translationNode.attribute("speedParams").as_string());
-
-			stage->m_animations.push_back(new CircleTranslate(startAngle, endAngle, radius, speedVals, start, end, loop, target));
-		}
-
-		static void addTranslation(const pugi::xml_node& translationNode, const std::unordered_map<unsigned int, Vec2D>& points,
-								   const std::unordered_map<id_val, Animation::Target>& indexes, 
-								   Stage* stage, const bool mirrorModeOn) {
-
-			static const std::string c_lineal = "lineal", c_bezier = "bezier", c_circle = "circle";
-
-			if (translationNode.attribute("type").as_string() == c_lineal) {
-				addLinealTranslation(translationNode, points, indexes, stage, mirrorModeOn);
-			}
-
-			else if (translationNode.attribute("type").as_string() == c_bezier) {
-				addBezierTranslation(translationNode, points, indexes, stage, mirrorModeOn);
-			}
-
-			else if (translationNode.attribute("type").as_string() == c_circle) {
-				addCircleTranslation(translationNode, points, indexes, stage, mirrorModeOn);
-			}
-		}
-
-		static void addRotation(const pugi::xml_node& rotationNode, const std::unordered_map<id_val, Animation::Target>& indexes, 
-								Stage* stage, const bool& mirrorModeOn) {
-
-			id_val targetID = rotationNode.attribute("id").as_uint();
-			Animation::Target target = indexes.at(targetID);
-
-			unsigned long start = rotationNode.attribute("startTime").as_ullong();
-			unsigned long end = rotationNode.attribute("endTime").as_ullong();
-			unsigned long loop = rotationNode.attribute("loopEvery").as_ullong();
-
-			Float angle = -AS_FLOAT(rotationNode.attribute("angle")) * 2 * C_PI / 360;
-			angle *= (mirrorModeOn ? -1 : 1);
-
-			std::vector<Float> speedVals = stringToSpeedVals(rotationNode.attribute("speedParams").as_string());
-
-			stage->m_animations.push_back(new Rotate(angle, speedVals, start, end, loop, target));
-		}
-
-		static void addToggle(const pugi::xml_node& toggleNode,
-							  const std::unordered_map<id_val, Animation::Target>& indexes, Stage* stage) {
-
-			id_val targetID = toggleNode.attribute("id").as_uint();
-			Animation::Target target = indexes.at(targetID);
-
-			unsigned long time = toggleNode.attribute("time").as_ullong();
-			unsigned long loop = toggleNode.attribute("loopEvery").as_ullong();
-
-			if (loop == 0) {
-				Toggle toggle(time, loop, target);
-				stage->m_nonLoopingToggles.push_back(toggle);
-			}
-			else {
-				stage->m_animations.push_back(new Toggle(time, loop, target));
-			}
-		}
-
-		static void addScale(const pugi::xml_node& rotationNode,
-							 const std::unordered_map<id_val, Animation::Target>& indexes, Stage* stage) {
-
-			id_val targetID = rotationNode.attribute("id").as_uint();
-			Animation::Target target = indexes.at(targetID);
-
-			unsigned long start = rotationNode.attribute("startTime").as_ullong();
-			unsigned long end = rotationNode.attribute("endTime").as_ullong();
-			unsigned long loop = rotationNode.attribute("loopEvery").as_ullong();
-
-			Float scaleFactor = AS_FLOAT(rotationNode.attribute("scaleFactor"));
-
-			std::vector<Float> speedVals = stringToSpeedVals(rotationNode.attribute("speedParams").as_string());
-
-			stage->m_animations.push_back(new Scale(scaleFactor, speedVals, start, end, loop, target));
-		}
 
 		static void addAnimations(const pugi::xml_node& animationsNode, const std::unordered_map<unsigned int, Vec2D>& points,
 								  const std::unordered_map<id_val, Animation::Target>& indexes, 
-								  Stage* stage, const bool mirrorModeOn) {
+								  Stage* stage, const StageLoadOptions& loadOptions) {
 
-			static const std::string c_rotate = "rotate", c_translate = "translate", c_toggle = "toggle", c_scale = "scale";
+			static const std::string c_rotate = "rotate", c_translateLineal = "translateLineal", c_translateBezier = "translateBezier",
+				c_translateCircle = "translateCircle", c_toggle = "toggle", c_scale = "scale";
 
 			for (auto it = animationsNode.begin(); it != animationsNode.end(); it++) {
 				if (it->name() == c_rotate) {
-					addRotation(*it, indexes, stage, mirrorModeOn);
+					stage->m_animations.push_back(new Rotate(*it, indexes, loadOptions));
 				}
 
-				else if (it->name() == c_translate) {
-					addTranslation(*it, points, indexes, stage, mirrorModeOn);
+				else if (it->name() == c_translateLineal) {
+					stage->m_animations.push_back(new LinealTranslate(*it, points, indexes, loadOptions));
+				}
+
+				else if (it->name() == c_translateBezier) {
+					stage->m_animations.push_back(new BezierTranslate(*it, points, indexes, loadOptions));
+				}
+
+				else if (it->name() == c_translateCircle) {
+					stage->m_animations.push_back(new CircleTranslate(*it, indexes, loadOptions));
 				}
 
 				else if (it->name() == c_toggle) {
-					addToggle(*it, indexes, stage);
+					if (it->attribute("loopEvery").as_ullong() == 0) {
+						Toggle toggle(*it, indexes, loadOptions);
+						stage->m_nonLoopingToggles.push_back(toggle);
+					}
+					else {
+						stage->m_animations.push_back(new Toggle(*it, indexes, loadOptions));
+					}
 				}
 
 				else if (it->name() == c_scale) {
-					addScale(*it, indexes, stage);
+					stage->m_animations.push_back(new Scale(*it, indexes, loadOptions));
 				}
 			}
 		}
@@ -2798,7 +2732,8 @@ class Round {
 			  const RoundOptions& roundOptions = RoundOptions::defaultOptions()) :
 			m_toBePlacedStaticParticle(0, 0, 1) {
 
-			m_stage = LoadStageXML::loadStage(stageName, roundOptions.isMirrorModeOn(), roundOptions.invertMovingParticleCharges());
+			StageLoadOptions stageLoadOptions(roundOptions.isMirrorModeOn(), roundOptions.invertMovingParticleCharges());
+			m_stage = LoadStageXML::loadStage(stageName, stageLoadOptions);
 			m_updateCounter = 0;
 			m_roundState = initialState;
 			m_initialRoundState = initialState;
