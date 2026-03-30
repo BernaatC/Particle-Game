@@ -24,32 +24,32 @@
 	</obstacles>
 	
 	<animations>
-		<translate id="2001" type="circle" radius="90" startAngle="90" endAngle="-270" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		<translateCircle id="2001" radius="90" startAngle="90" endAngle="-270" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
 		<rotate id="2001" angle="-360" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
 		
-		<translate id="2002" type="circle" radius="90" startAngle="210" endAngle="-150" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		<translateCircle id="2002" radius="90" startAngle="210" endAngle="-150" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
 		<rotate id="2002" angle="-360" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
 		
-		<translate id="2003" type="circle" radius="90" startAngle="330" endAngle="-30" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
+		<translateCircle id="2003" radius="90" startAngle="330" endAngle="-30" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
 		<rotate id="2003" angle="-360" speedParams="1" startTime="0" endTime="3840" loopEvery="3840" />
 		
 		
-		<translate id="2101" type="circle" radius="140" startAngle="-270" endAngle="90" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<translateCircle id="2101" radius="140" startAngle="-270" endAngle="90" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		<rotate id="2101" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		
-		<translate id="2102" type="circle" radius="140" startAngle="-210" endAngle="150" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<translateCircle id="2102" radius="140" startAngle="-210" endAngle="150" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		<rotate id="2102" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		
-		<translate id="2103" type="circle" radius="140" startAngle="-150" endAngle="210" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<translateCircle id="2103" radius="140" startAngle="-150" endAngle="210" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		<rotate id="2103" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		
-		<translate id="2104" type="circle" radius="140" startAngle="-90" endAngle="270" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<translateCircle id="2104" radius="140" startAngle="-90" endAngle="270" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		<rotate id="2104" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		
-		<translate id="2105" type="circle" radius="140" startAngle="-30" endAngle="330" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<translateCircle id="2105" radius="140" startAngle="-30" endAngle="330" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		<rotate id="2105" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		
-		<translate id="2106" type="circle" radius="140" startAngle="-330" endAngle="30" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
+		<translateCircle id="2106" radius="140" startAngle="-330" endAngle="30" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 		<rotate id="2106" angle="360" speedParams="1" startTime="0" endTime="7680" loopEvery="7680" />
 	</animations>
 </stage>

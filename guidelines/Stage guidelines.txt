@@ -132,25 +132,28 @@ Common attributes:
 7: Animations:
 
 <animations>
-	<translate id="1" type="lineal" endPoint="100,100" speedParams="1" startTime="0" endTime="100" loopEvery="0" />
-	<translate id="3" type="bezier" bezierParams="100,100;5;300,200;4" speedParams="1,2,3" startTime="50" endTime="100" loopEvery="150" />
-	<translate id="2" type="circle" radius="50" startAngle="90" endAngle="180" speedParams="0,-1" startTime="50" endTime="100" loopEvery="150" />
+	<translateLineal id="1" endPoint="100,100" speedParams="1" startTime="0" endTime="100" loopEvery="0" />
+	<translateBezier id="3" bezierParams="100,100;5;300,200;4" speedParams="1,2,3" startTime="50" endTime="100" loopEvery="150" />
+	<translateCircle id="2" radius="50" startAngle="90" endAngle="180" speedParams="0,-1" startTime="50" endTime="100" loopEvery="150" />
 	<rotate id="4" angle="180" speedParams="0,3,-2" startTime="0" endTime="100" loopEvery="0" />
 	<toggle id="5" time="150" loopEvery="200" />
 	<scale id="6" scaleFactor="2" speedParams="1" startTime="0" endTime="100" loopEvery="0" />
+	...
 </animations>
 
-translate: Tag that holds all necessary data for defining a translation animation.
+translateLineal: Tag that holds all necessary data for defining a lineal translation animation.
 Unique attributes:
-	- type: Defines the type of movement the item will take (linear, circular or quadratic bezier curve) as "lineal", "circle" or "bezier" respectively.
-	if type="lineal":
-		- endPoint: Defines the end point of the translation (assumes the translation starts at (0, 0)). Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
-	if type="bezier":
-		- bezierParams: Defines the control points of the Bezier curve, where the starting point is (0,0) and the end point is the last one defined. Must be represented as a series of pooints separated by a semicomma (;) without spaces, and each point must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
-	if type="circle":
-		- radius: Distance away from the rotation center. Must be a real number.
-		- startAngle: Starting angle for the animation. Must be a real number, and is represented in degrees.
-		- endAngle: Ending angle for the animation. Must be a real number, and is represented in degrees.
+	- endPoint: Defines the end point of the translation (assumes the translation starts at (0, 0)). Must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+
+translateBezier: Tag that holds all necessary data for defining a bezier translation animation.
+Unique attributes:
+	- bezierParams: Defines the control points of the Bezier curve, where the starting point is (0,0) and the end point is the last one defined. Must be represented as a series of pooints separated by a semicomma (;) without spaces, and each point must be represented as two real numbers separated by a comma (without spaces) or as an integer (including zero) previously used as a point ID.
+
+translateCircle: Tag that holds all necessary data for defining a circle translation animation.
+Unique attributes:
+	- radius: Distance away from the rotation center. Must be a real number.
+	- startAngle: Starting angle for the animation. Must be a real number, and is represented in degrees.
+	- endAngle: Ending angle for the animation. Must be a real number, and is represented in degrees.
 
 rotate: Tag that holds all necessary data for defining a rotation animation.
 Attributes:

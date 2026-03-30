@@ -83,9 +83,9 @@
 		<toggle id="2039" time="2880" loopEvery="0" />
 		
 		<toggle id="2050" time="2976" loopEvery="0" />
-		<translate id="2050" type="lineal" endPoint="-150,0" speedParams="1" startTime="2976" endTime="3216" loopEvery="0" />
-		<translate id="2050" type="lineal" endPoint="150,0" speedParams="1" startTime="3216" endTime="3456" loopEvery="0" />
-		<translate id="1001" type="lineal" endPoint="150,0" speedParams="1" startTime="3216" endTime="3456" loopEvery="0" />
+		<translateLineal id="2050" endPoint="-150,0" speedParams="1" startTime="2976" endTime="3216" loopEvery="0" />
+		<translateLineal id="2050" endPoint="150,0" speedParams="1" startTime="3216" endTime="3456" loopEvery="0" />
+		<translateLineal id="1001" endPoint="150,0" speedParams="1" startTime="3216" endTime="3456" loopEvery="0" />
 		<toggle id="2050" time="3456" loopEvery="0" />
 		<toggle id="1001" time="3456" loopEvery="0" />
 	</animations>

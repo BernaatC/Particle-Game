@@ -32,9 +32,9 @@
 	</obstacles>
 	
 	<animations>
-		<translate id="1" type="lineal" endPoint="0,-60" speedParams="1" startTime="0" endTime="720" loopEvery="3840" />
-		<translate id="1" type="lineal" endPoint="0,120" speedParams="1" startTime="1200" endTime="2640" loopEvery="3840" />
-		<translate id="1" type="lineal" endPoint="0,-60" speedParams="1" startTime="3120" endTime="3840" loopEvery="3840" />
+		<translateLineal id="1" endPoint="0,-60" speedParams="1" startTime="0" endTime="720" loopEvery="3840" />
+		<translateLineal id="1" endPoint="0,120" speedParams="1" startTime="1200" endTime="2640" loopEvery="3840" />
+		<translateLineal id="1" endPoint="0,-60" speedParams="1" startTime="3120" endTime="3840" loopEvery="3840" />
 		
 		<rotate id="2" angle="-360" speedParams="1" startTime="0" endTime="1680" loopEvery="3840" />
 		<rotate id="2" angle="360" speedParams="1" startTime="1920" endTime="3600" loopEvery="3840" />

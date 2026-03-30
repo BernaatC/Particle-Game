@@ -16,9 +16,9 @@
 	</obstacles>
 	
 	<animations>
-		<translate id="2001" type="lineal" endPoint="0,-60" speedParams="0,3,-2" startTime="0" endTime="1440" loopEvery="2880" />
-		<translate id="2001" type="lineal" endPoint="0,60" speedParams="0,3,-2" startTime="1440" endTime="2880" loopEvery="2880" />
-		<translate id="2002" type="lineal" endPoint="0,60" speedParams="0,3,-2" startTime="0" endTime="1440" loopEvery="2880" />
-		<translate id="2002" type="lineal" endPoint="0,-60" speedParams="0,3,-2" startTime="1440" endTime="2880" loopEvery="2880" />
+		<translateLineal id="2001" endPoint="0,-60" speedParams="0,3,-2" startTime="0" endTime="1440" loopEvery="2880" />
+		<translateLineal id="2001" endPoint="0,60" speedParams="0,3,-2" startTime="1440" endTime="2880" loopEvery="2880" />
+		<translateLineal id="2002" endPoint="0,60" speedParams="0,3,-2" startTime="0" endTime="1440" loopEvery="2880" />
+		<translateLineal id="2002" endPoint="0,-60" speedParams="0,3,-2" startTime="1440" endTime="2880" loopEvery="2880" />
 	</animations>
 </stage>
